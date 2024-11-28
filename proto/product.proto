@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package product;
+
+option go_package = "/protobuff";
+
+service ProductService {
+    rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse);
+    rpc GetProduct(GetProductRequest) returns (GetProductResponse);
+    rpc ListProduct(ListProductRequest) returns (ListProductResponse);
+    rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse);
+    rpc DeleteProduct(DeleteProductRequest) returns (DeleteProductResponse);
+    rpc GetProductStock(GetProductStockRequest) returns (GetProductStockResponse);
+}
+
+message Product {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    float price = 4;
+    int32 stock = 5;
+    string created_at = 6;
+    string updated_at = 7;
+}
+
+message CreateProductRequest {
+    string name = 1;
+    string description = 2;
+    float price = 3;
+    int32 stock = 4;
+}
+
+message CreateProductResponse {
+    string message = 1;
+    Product product = 2;
+}
+
+message GetProductRequest {
+    string id = 1;
+}
+
+message GetProductResponse {
+    string message = 1;
+    Product product = 2;
+}
+
+message ListProductRequest {
+    int32 page = 1;
+    int32 limit = 2;
+}
+
+message ListProductResponse {
+    string message = 1;
+    repeated Product products = 2;
+}
+
+message UpdateProductRequest {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    float price = 4;
+    int32 stock = 5;
+}
+
+message UpdateProductResponse {
+    string message = 1;
+    Product product = 2;
+}
+
+message DeleteProductRequest {
+    string id = 1;
+}
+
+message DeleteProductResponse {
+    string message = 1;
+}
+
+message GetProductStockRequest {
+    string id = 1;
+}
+
+message GetProductStockResponse {
+    string message = 1;
+    int32 stock = 2;
+}

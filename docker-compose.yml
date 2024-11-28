@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # Product Database (Postgres)
+  product-db:
+    image: postgres:13-alpine
+    container_name: product-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: products
+    volumes:
+      - book-db-data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+# Volumes to persist database data
+volumes:
+  book-db-data:
+
+# Define networks for internal service communication
+networks:
+  backend:
+    driver: bridge

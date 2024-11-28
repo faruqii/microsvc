@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package order;
+
+option go_package = "/protobuff";
+
+service OrderService {
+    rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+    rpc GetOrder(GetOrderRequest) returns (GetOrderResponse);
+    rpc ListOrder(ListOrderRequest) returns (ListOrderResponse);
+    rpc UpdateOrder(UpdateOrderRequest) returns (UpdateOrderResponse);
+    rpc DeleteOrder(DeleteOrderRequest) returns (DeleteOrderResponse);
+}
+
+message Order {
+    string id = 1;
+    string product_id = 2;
+    int32 quantity = 4;
+    float total = 5;
+    string created_at = 6;
+    string updated_at = 7;
+}
+
+message CreateOrderRequest {
+    string product_id = 1;
+    int32 quantity = 3;
+}
+
+message CreateOrderResponse {
+    string message = 1;
+    Order order = 2;
+}
+
+message GetOrderRequest {
+    string id = 1;
+}
+
+message GetOrderResponse {
+    string message = 1;
+    Order order = 2;
+}
+
+message ListOrderRequest {
+    int32 page = 1;
+    int32 limit = 2;
+}
+
+message ListOrderResponse {
+    string message = 1;
+    repeated Order orders = 2;
+}
+
+message UpdateOrderRequest {
+    string id = 1;
+    string product_id = 2;
+    string user_id = 3;
+    int32 quantity = 4;
+}
+
+message UpdateOrderResponse {
+    string message = 1;
+    Order order = 2;
+}
+
+message DeleteOrderRequest {
+    string id = 1;
+}
+
+message DeleteOrderResponse {
+    string message = 1;
+}
