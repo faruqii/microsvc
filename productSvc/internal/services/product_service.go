@@ -5,6 +5,7 @@ import (
 	"product-service/internal/repositories"
 )
 
+//go:generate mockgen -source=product_service.go -destination=mock_auth_service.go -package=mocks
 type ProductService interface {
 	CreateProduct(product *entities.Product) (*entities.Product, error)
 	GetProduct(id string) (*entities.Product, error)

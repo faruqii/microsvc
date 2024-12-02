@@ -3,7 +3,6 @@ package services
 import (
 	"context"
 	"fmt"
-	"log"
 	"order-service/externals"
 	"order-service/internal/entities"
 	"order-service/internal/repositories"
@@ -36,54 +35,64 @@ func NewOrderService(
 }
 
 func (s *orderService) CreateOrder(order *entities.Order) (*entities.Order, error) {
-	// check if product exists
 	ctx := context.Background()
-	productRequest := &externals.GetProductRequest{
-		Id: order.ProductID,
-	}
 
-	productResponse, err := s.productClient.GetProduct(ctx, productRequest)
+	// Validate product existence and stock
+	product, err := s.checkProductAvailability(ctx, order.ProductID, order.Quantity)
 	if err != nil {
-		if grpc.Code(err) == codes.NotFound {
-			return nil, fmt.Errorf("product with ID %s not found", order.ProductID)
-		}
-		return nil, fmt.Errorf("failed to check product existence: %v", err)
+		return nil, err
 	}
 
-	log.Printf("productResponse: %v", productResponse)
-
-	if productResponse == nil || productResponse.Product == nil {
-		return nil, fmt.Errorf("product with ID %s does not exist", order.ProductID)
+	// Update product stock
+	if err := s.updateProductStock(ctx, product, order.Quantity); err != nil {
+		return nil, err
 	}
 
-	// check if product stock is enough
-	if productResponse.Product.Stock < int32(order.Quantity) {
-		return nil, fmt.Errorf("product stock is not enough")
-	}
+	// Calculate total price
+	order.Total = product.Price * float32(order.Quantity)
 
-	// update product stock
-	productUpdateRequest, err := s.productClient.UpdateProduct(ctx, &externals.UpdateProductRequest{
-		Id:    order.ProductID,
-		Stock: productResponse.Product.Stock - int32(order.Quantity),
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to update product stock: %v", err)
-	}
-
-	if productUpdateRequest == nil || productUpdateRequest.Product == nil {
-		return nil, fmt.Errorf("failed to update product stock")
-	}
-
-	// calculate total price
-	order.Total = productResponse.Product.Price * float32(order.Quantity)
-
-	// Continue with order creation logic
+	// Step 4: Create the order
 	createdOrder, err := s.orderRepo.CreateOrder(order)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create order: %v", err)
 	}
 
 	return createdOrder, nil
+}
+
+// Helper to check product availability
+func (s *orderService) checkProductAvailability(ctx context.Context, productID string, quantity int) (*externals.Product, error) {
+	productRequest := &externals.GetProductRequest{Id: productID}
+	productResponse, err := s.productClient.GetProduct(ctx, productRequest)
+	if err != nil {
+		if grpc.Code(err) == codes.NotFound {
+			return nil, fmt.Errorf("product with ID %s not found", productID)
+		}
+		return nil, fmt.Errorf("failed to check product existence: %v", err)
+	}
+
+	if productResponse == nil || productResponse.Product == nil {
+		return nil, fmt.Errorf("product with ID %s does not exist", productID)
+	}
+
+	if productResponse.Product.Stock < int32(quantity) {
+		return nil, fmt.Errorf("product stock is insufficient")
+	}
+
+	return productResponse.Product, nil
+}
+
+// Helper to update product stock
+func (s *orderService) updateProductStock(ctx context.Context, product *externals.Product, quantity int) error {
+	_, err := s.productClient.UpdateProduct(ctx, &externals.UpdateProductRequest{
+		Id:    product.Id,
+		Stock: product.Stock - int32(quantity),
+	})
+	if err != nil {
+		return fmt.Errorf("failed to update product stock: %v", err)
+	}
+
+	return nil
 }
 
 func (s *orderService) GetOrder(id string) (*entities.Order, error) {

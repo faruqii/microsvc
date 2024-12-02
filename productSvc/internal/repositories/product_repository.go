@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
+//go:generate mockgen -source=product_repository.go -destination=mock_product_repository.go -package=mocks
 type ProductRepository interface {
 	CreateProduct(product *entities.Product) (*entities.Product, error)
 	GetProduct(id string) (*entities.Product, error)

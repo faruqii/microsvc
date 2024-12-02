@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 	"product-service/internal/entities"
-	"product-service/internal/protobuff/protobuff"
+	"product-service/internal/protobuff"
 
 	"product-service/internal/services"
 	"time"

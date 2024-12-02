@@ -1,5 +1,5 @@
 PROTO_DIR=../proto
-PRODUCT_OUTPUT_DIR=externals
+PRODUCT_OUTPUT_DIR=externals/
 PRODUCT_PROTO_FILE=$(PROTO_DIR)/product.proto
 
 PROTOC=protoc

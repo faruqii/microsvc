@@ -7,7 +7,7 @@ import (
 	"order-service/externals"
 	"order-service/internal/config/database"
 	"order-service/internal/handlers"
-	"order-service/internal/protobuff/protobuff"
+	"order-service/internal/protobuff"
 	"order-service/internal/repositories"
 	"order-service/internal/services"
 	"os"

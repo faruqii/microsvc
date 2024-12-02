@@ -3,7 +3,7 @@ package handlers
 import (
 	"context"
 	"order-service/internal/entities"
-	"order-service/internal/protobuff/protobuff"
+	"order-service/internal/protobuff"
 	"order-service/internal/services"
 	"time"
 )

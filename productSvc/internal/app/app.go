@@ -6,7 +6,7 @@ import (
 	"os"
 	"product-service/internal/config/database"
 	"product-service/internal/handlers"
-	"product-service/internal/protobuff/protobuff"
+	"product-service/internal/protobuff"
 	"product-service/internal/repositories"
 	"product-service/internal/services"
 	"sync"
