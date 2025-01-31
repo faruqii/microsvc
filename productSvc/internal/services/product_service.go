@@ -24,23 +24,23 @@ func NewProductService(productRepo repositories.ProductRepository) *productServi
 }
 
 func (s *productService) CreateProduct(product *entities.Product) (*entities.Product, error) {
-	return s.productRepo.CreateProduct(product)
+	return s.productRepo.Create(product)
 }
 
 func (s *productService) GetProduct(id string) (*entities.Product, error) {
-	return s.productRepo.GetProduct(id)
+	return s.productRepo.Get(id)
 }
 
 func (s *productService) ListProducts(page, limit int) ([]*entities.Product, error) {
-	return s.productRepo.ListProducts(page, limit)
+	return s.productRepo.List(page, limit)
 }
 
 func (s *productService) UpdateProduct(product *entities.Product) (*entities.Product, error) {
-	return s.productRepo.UpdateProduct(product)
+	return s.productRepo.Update(product)
 }
 
 func (s *productService) DeleteProduct(id string) error {
-	return s.productRepo.DeleteProduct(id)
+	return s.productRepo.Delete(id)
 }
 
 func (s *productService) GetProductStock(id string) (int32, error) {
