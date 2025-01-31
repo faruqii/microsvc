@@ -1,6 +1,11 @@
 package repositories
 
-import "gorm.io/gorm"
+import (
+	"errors"
+	"reflect"
+
+	"gorm.io/gorm"
+)
 
 type Repositories[T any] interface {
 	Create(entities *T) (*T, error)
@@ -42,7 +47,14 @@ func (r *RepositoryImpl[T]) List(page, limit int) ([]*T, error) {
 }
 
 func (r *RepositoryImpl[T]) Update(entities *T) (*T, error) {
-	if err := r.db.Save(entities).Error; err != nil {
+	// using reflection to get the ID field as we use generic type
+	value := reflect.ValueOf(entities).Elem()
+	idField := value.FieldByName("ID")
+	if !idField.IsValid() {
+		return nil, errors.New("ID field not found")
+	}
+	// update the entity
+	if err := r.db.Where("id = ?", idField.Interface()).Updates(entities).Error; err != nil {
 		return nil, err
 	}
 	return entities, nil
